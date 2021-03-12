@@ -31,17 +31,56 @@ az network vnet create \
   --subnet-prefixes 10.0.0.0/24 \
   --output table
 
+# サブネットの追加
+echo "サブネット AzureBastionSubnet を作成します..."
+az network vnet subnet create \
+  --name AzureBastionSubnet \
+  --vnet-name VNet$num \
+  --resource-group RG$num \
+  --address-prefixes "10.0.1.0/24" \
+  --output table
+
+# パブリックIPアドレスの作成
+echo "パブリックIPアドレス " Pip$num " を作成します..."
+az network public-ip create \
+  --resource-group RG$num \
+  --name Pip$num \
+  --sku Standard \
+  --location japaneast \
+  --output table
+
 # 仮想マシンの作成
 echo "仮想マシン" ADDS$num "を作成します..."
 az vm create \
     --resource-group RG$num \
-    --name ADDS$num-A \
+    --name ADDS$num \
     --image win2019datacenter \
     --size Standard_B4ms \
     --admin-username admin$num \
     --admin-password 'Pa$$w0rd1234' \
     --vnet-name VNet$num \
     --subnet Frontend \
+    --output table
+
+# Azure Bastionの作成
+echo "Azure Bastionホスト " Bastion$num " を作成します..."
+az network bastion create \
+  --name Bastion$num \
+  --public-ip-address Pip$num \
+  --resource-group RG$num \
+  --vnet-name VNet$num \
+  --location japaneast \
+  --output table
+
+# カスタムスクリプト拡張のインストール
+echo "カスタムスクリプト拡張をインストールします..."
+az vm extension set \
+    --publisher Microsoft.Compute \
+    --version 1.8 \
+    --name CustomScriptExtension \
+    --vm-name ADDS$num \
+    --resource-group RG$num \
+    --settings '{"fileUris":["https://github.com/necmp/az304/raw/master/cse-lab01.ps1"],"commandToExecute":"powershell.exe -ExecutionPolicy Unrestricted -file cse-lab01.ps1"}' \
     --output table
 
 # 終了メッセージ
