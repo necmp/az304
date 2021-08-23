@@ -2,7 +2,7 @@
 
 # 開始メッセージ
 echo;
-printf "\e[33;1m----- NECMP AZ304 Training / Lab01 Setup -----\e[m"
+printf "\e[33;1m----- NECMP AZ304 Training / Lab02 Setup -----\e[m"
 echo;
 echo;
 echo -n "あなたの <受講者番号> を入力してください = "
@@ -80,7 +80,7 @@ az vm extension set \
     --name CustomScriptExtension \
     --vm-name ADDS$num \
     --resource-group RG$num \
-    --settings '{"fileUris":["https://github.com/necmp/az304/raw/master/cse-lab01.ps1"],"commandToExecute":"powershell.exe -ExecutionPolicy Unrestricted -file cse-lab01.ps1"}' \
+    --settings '{"fileUris":["https://github.com/necmp/az304/raw/master/cse-lab02.ps1"],"commandToExecute":"powershell.exe -ExecutionPolicy Unrestricted -file cse-lab02.ps1"}' \
     --output table
 
 # 終了メッセージ
